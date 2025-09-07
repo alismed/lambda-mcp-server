@@ -16,6 +16,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Get Destroy infra from tfvars
+        run: |
+          export DESTROY_INFRA=$(grep 'destroy_infra' infra/destroy.yml | cut -d':' -f2 | tr -d '[:space:]')
+          echo "Destroy Infra: $DESTROY_INFRA"
+          echo "DESTROY_INFRA=$DESTROY_INFRA" >> $GITHUB_ENV
+
       - name: Get Region from tfvars
         run: |
           export REGION=$(grep 'region' infra/terraform.tfvars | cut -d'"' -f2)
@@ -23,10 +29,12 @@ jobs:
           echo "REGION=$REGION" >> $GITHUB_ENV
 
       - name: Install Python dependencies
+        if: ${{ env.DESTROY_INFRA != 'true' }}
         run: |
           python -m pip install -r app/test/requirements.txt
 
       - name: Run Unit tests
+        if: ${{ env.DESTROY_INFRA != 'true' }}
         run: |
           export AWS_DEFAULT_REGION=$REGION
           python --version
@@ -67,12 +75,6 @@ jobs:
             mv terraform /usr/local/bin/
           fi
           terraform version
-
-      - name: Get Destroy infra from tfvars
-        run: |
-          export DESTROY_INFRA=$(grep 'destroy_infra' infra/destroy.yml | cut -d':' -f2 | tr -d '[:space:]')
-          echo "Destroy Infra: $DESTROY_INFRA"
-          echo "DESTROY_INFRA=$DESTROY_INFRA" >> $GITHUB_ENV
 
       - name: Destroy infra if variable is set
         if: ${{ env.DESTROY_INFRA == 'true' }}

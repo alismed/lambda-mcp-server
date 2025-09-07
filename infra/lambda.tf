@@ -27,5 +27,5 @@ resource "aws_lambda_function" "aws_function" {
   handler       = var.handler
   runtime       = var.runtime
   role          = aws_iam_role.lambda_role.arn
-  #  depends_on    = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
+  architectures = var.architectures
 }
