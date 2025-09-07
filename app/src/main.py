@@ -1,7 +1,4 @@
-import os
 import boto3
-import logging
-import json
 
 
 def lambda_handler(event, context):
@@ -15,6 +12,7 @@ def lambda_handler(event, context):
         return list_resources()
     else:
         raise Exception("Unknown field, unable to resolve " + field)
+
 
 def list_resources():
     client = boto3.client('ec2')
