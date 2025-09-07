@@ -94,12 +94,12 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const action = env.DESTROY_INFRA === "true" ? "destruída" : "criada";
-            const msg = [
-              `Infra ${{ inputs.cluster_name }} foi ${action} com sucesso!`,
-            ].join('\n');
+            const action = process.env.DESTROY_INFRA === "true" ? "destruída" : "criada";
+            const cluster = process.env.CLUSTER_NAME || "";
+            const subject = cluster ? `Infra ${cluster}` : `Infra`;
+            const msg = `${subject} foi ${action} com sucesso!`;
 
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               issue_number: context.issue.number,
               repo: context.repo.repo,
