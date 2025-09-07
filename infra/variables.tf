@@ -27,3 +27,9 @@ variable "runtime" {
   type        = string
   default     = ""
 }
+
+variable "architectures" {
+  description = "The instruction set architecture that the function supports"
+  type        = list(string)
+  default     = ["x86_64"]
+}
